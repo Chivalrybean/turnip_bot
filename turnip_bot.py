@@ -1,10 +1,8 @@
 import discord
-import json
+import pickle
 
 turnip_data = {}
 # structure {server:{channel:[{islands}], channel:[{islands}]}, server:{channel: {[{islands}]}}}
-
-# TODO Convert to using pickle to save data
 
 
 class Island:
@@ -26,20 +24,20 @@ class Island:
 
 def save_data():
     global turnip_data
-    """Saves turnip_data to .json file"""
-    with open('turnip_file.json', 'w') as f:
-        json.dump(turnip_data, f)
+    """Saves turnip_data to pickle file"""
+    with open('turnip_file', 'wb') as f:
+        pickle.dump(turnip_data, f)
 
 
 def load_data():
     global turnip_data
-    """Loads .json file data to turnip_data, unless no file present, then it creates a new file and puts current data into it."""
+    """Loads pickle file data to turnip_data, unless no file present, then it creates a new file and puts current data into it."""
     try:
-        with open('turnip_file.json', 'r') as f:
-            turnip_data = json.load(f)
+        with open('turnip_file', 'rb') as f:
+            turnip_data = pickle.load(f)
     except FileNotFoundError:
-        with open('turnip_file.json', 'w') as f:
-            json.dump(turnip_data, f)
+        with open('turnip_file', 'wb') as f:
+            pickle.dump(turnip_data, f)
         print("New data file created")
 
 
@@ -75,7 +73,7 @@ def add_island(server, channel, island):
 
 # load_data()
 
-# test_island = Island('Turnipceratops', '949DSY', 75, 'Rising', 'Eat mor chikn')
+# test_island = Island('Blubber', '2342S', 75, 'Falling', 'WHERESDABEEF')
 
-# add_island(1234, 3425, test_island)
+# add_island(5555, 12121, test_island)
 # print(turnip_data)
