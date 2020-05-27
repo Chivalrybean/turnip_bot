@@ -35,7 +35,7 @@ def load_data():
 
 
 def generate_list(server, channel):
-    response = "-" * 30
+    response = "-" * 40 + "\n"
     try:
         this_list = turnip_data[server][channel]
     except KeyError:
@@ -43,4 +43,15 @@ def generate_list(server, channel):
         return response
     for island in this_list:
         response = response + "{}\n".format(island.get_island())
-    response = response + "-" * 30
+    response = response + "-----www.patreon.com/spaceturtletools---"
+
+
+def add_island(server, channel, island):
+    global turnip_data
+    if channel in turnip_data.keys():
+        if server in turnip_data[server].keys():
+            turnip_data[server][channel].append(island)
+        else:
+            turnip_data[server][channel] = [island]
+    else:
+        turnip_data[server] = {channel: [island]}
