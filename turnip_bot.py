@@ -2,6 +2,7 @@ import discord
 import json
 
 turnip_data = {}
+# structure {server:{channel:[{islands}], channel:[{islands}]}, server:{channel: {[{islands}]}}}
 
 
 class island:
@@ -31,3 +32,15 @@ def load_data():
         with open('turnip_file.json', 'w') as f:
             json.dump(turnip_data, f)
         print("New data file created")
+
+
+def generate_list(server, channel):
+    response = "-" * 30
+    try:
+        this_list = turnip_data[server][channel]
+    except KeyError:
+        response = "There are no inslands listed on this server for this channel"
+        return response
+    for island in this_list:
+        response = response + "{}\n".format(island.get_island())
+    response = response + "-" * 30
