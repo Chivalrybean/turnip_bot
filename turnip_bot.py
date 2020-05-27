@@ -4,7 +4,7 @@ import json
 turnip_data = {}
 # structure {server:{channel:[{islands}], channel:[{islands}]}, server:{channel: {[{islands}]}}}
 
-# TODO have save_data convert Island objects to a dict, in a yet-to-be-created get_dict method(or similar)
+# TODO Convert to using pickle to save data
 
 
 class Island:
