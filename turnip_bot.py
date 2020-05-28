@@ -1,5 +1,6 @@
 import discord
 import pickle
+import re
 
 turnip_data = {}
 # structure {server:{channel:[{islands}], channel:[{islands}]}, server:{channel: {[{islands}]}}}
@@ -77,3 +78,18 @@ def add_island(server, channel, island):
 
 # add_island(5555, 12121, test_island)
 # print(turnip_data)
+
+client = discord.Client()
+
+
+@client.event
+async def on_ready():
+    print('The bot has logged in as {0.user}'.format(client))
+
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+    elif message.content.startswith("&island"):
+        pass
