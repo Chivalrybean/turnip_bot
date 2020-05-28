@@ -7,10 +7,10 @@ turnip_data = {}
 
 
 class Island:
-    def __init__(self, name, code, turnip_price, forecast='unknown', note=''):
-        self.name = name
+    def __init__(self, code, turnip_price, name,  forecast='unknown', note=''):
         self.code = code
         self.turnip_price = turnip_price
+        self.name = name
         self.forecast = forecast
         self.note = note
 
