@@ -1,13 +1,14 @@
 import discord
 import pickle
 import re
+import asyncio
 
 turnip_data = {}
 # structure {server:{channel:[{islands}], channel:[{islands}]}, server:{channel: {[{islands}]}}}
 
 
 class Island:
-    def __init__(self, code, turnip_price, name, username, forecast='unknown', note=''):
+    def __init__(self, code, name, username, turnip_price='n/a', forecast='unknown', note=''):
         self.code = code
         self.turnip_price = turnip_price
         self.name = name
@@ -90,7 +91,26 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    temp_msg = []
+
+    def delete_temp_messages():
+        for message in temp_msg:
+            await message.delete(delay=60)
+
     if message.author == client.user:
         return
     elif message.content.startswith("&island"):
-        pass
+        channel = message.channel
+        user = message.author
+        temp_msg.append = await channel.send("What is your Island name?")
+
+        def check(msg, user):
+            return msg.channel == channel and msg.author == user
+
+        try:
+            msg, user = await client.wait_for("What is the invite code?", timeout=60.0, check=check)
+        except asyncio.TimeoutError:
+            temp_msg.append = await channel.send("Island listing timed out")
+            delete_temp_messages()
+        else:
+            island_name = msg.content
