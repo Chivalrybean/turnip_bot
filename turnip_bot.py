@@ -3,16 +3,19 @@ import pickle
 import re
 import asyncio
 
+import local_settings as ls
+
 turnip_data = {}
 # structure {server:{channel:[{islands}], channel:[{islands}]}, server:{channel: {[{islands}]}}}
-
+island_questions = ["What is your invite code?", "What is your turnip price?",
+"Is your price forcast rising or falling?", "Do you have a short note for visitors?"]
 
 class Island:
-    def __init__(self, code, name, username, turnip_price='n/a', forecast='unknown', note=''):
+    def __init__(self, username, island_name, code, turnip_price='n/a', forecast='unknown', note=''):
+        self.username = username
+        self.island_name = island_name
         self.code = code
         self.turnip_price = turnip_price
-        self.name = name
-        self.username = username
         self.forecast = forecast
         self.note = note
 
@@ -91,10 +94,10 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    temp_msg = []
+    temp_msgs = []
 
-    def delete_temp_messages():
-        for message in temp_msg:
+    async def delete_temp_messages():
+        for message in temp_msgs:
             await message.delete(delay=60)
 
     if message.author == client.user:
@@ -102,15 +105,46 @@ async def on_message(message):
     elif message.content.startswith("&island"):
         channel = message.channel
         user = message.author
-        temp_msg.append = await channel.send("What is your Island name?")
+        tmp_msg = await channel.send("What is your Island name?")
+        temp_msgs.append(tmp_msg) 
 
-        def check(msg, user):
+        def check(msg):
+            print(msg.channel == channel and msg.author == user)
+            if msg.channel == channel and msg.author == user:
+                temp_msgs.append(msg)
             return msg.channel == channel and msg.author == user
+        island_info = [user]        
+        for question in island_questions:
+            try:
+                msg = await client.wait_for('message', timeout=60.0, check=check)
+            except asyncio.TimeoutError:
+                timeout_msg = await channel.send("Island listing timed out")
+                temp_msgs.append(timeout_msg)
+                await delete_temp_messages()
+                return
+            else:
+                island_info.append(msg.content)
+                print(island_info)
+                tmp_msg = await channel.send(question)
+                temp_msgs.append(tmp_msg)
+                if len(island_info) == 6:
+                    new_island = Island(*island_info)
+                    add_island(message.server, channel, new_island)
+                    await channel.send(generate_list())
+                    await delete_temp_messages()
+        
 
-        try:
-            msg, user = await client.wait_for("What is the invite code?", timeout=60.0, check=check)
-        except asyncio.TimeoutError:
-            temp_msg.append = await channel.send("Island listing timed out")
-            delete_temp_messages()
-        else:
-            island_name = msg.content
+        
+        
+        # try:
+        #     msg = await client.wait_for('message', timeout=60.0, check=check)
+        # except asyncio.TimeoutError:
+        #     timeout_msg = await channel.send("Island listing timed out")
+        #     temp_msg.append(timeout_msg)
+        #     await delete_temp_messages()
+        # else:
+        #     island_code = msg.content
+        #     print(island_code)
+        #     turnip_msg = await channel.send("What is your turnip price?")
+
+client.run(ls.token)
