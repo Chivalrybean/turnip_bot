@@ -1,24 +1,26 @@
 import discord
-# import pickle
+import pickle
 import re
 import asyncio
+import datetime
 
 import local_settings as ls
 
 turnip_data = {}
 # structure {server:{channel:[{islands}], channel:[{islands}]}, server:{channel: {[{islands}]}}}
 island_questions = ["What is your invite code?", "What is your turnip price?",
-                    "Is your price forcast rising or falling?", "Do you have a short note for visitors?"]
+                    "Is your price forcast rising or falling?", "Do you have a short note for visitors?", "In how many hours do you want this invite to expire?\n(Use digits)"]
 
 
 class Island:
-    def __init__(self, username, island_name, code, turnip_price, forecast, note):
+    def __init__(self, username, island_name, code, turnip_price, forecast, note, expire_time):
         self.username = username
         self.island_name = island_name
         self.code = code
         self.turnip_price = turnip_price
         self.forecast = forecast
         self.note = note
+        self.expire_time = datetime.datetime.now() + datetime.timedelta(hours=expire_time)
 
     def get_island(self):
         response = "{} {} {} {} {} {}".format(
@@ -86,6 +88,19 @@ def add_island(server, channel, island, data):
 # print(turnip_data)
 
 client = discord.Client()
+
+
+async def remove_expired_island(data):
+    await client.wait_until_ready()
+    while not client.is_closed():
+        for server in data.keys():
+            for channel in data[server].key():
+                for item in data[server][channel]:
+                    for island in item:
+                        if island.expire_time < datetime.datetime.now():
+                            item.remove(island)
+        print(data)
+        await asyncio.sleep(600)
 
 
 @client.event
@@ -157,4 +172,5 @@ async def on_message(message):
         #     print(island_code)
         #     turnip_msg = await channel.send("What is your turnip price?")
 
+client.loop.create_task(remove_expired_island(turnip_data))
 client.run(ls.token)
