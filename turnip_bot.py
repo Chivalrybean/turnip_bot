@@ -56,7 +56,7 @@ def generate_list(server, channel):
     try:
         this_list = turnip_data[server][channel]
     except KeyError:
-        response = "There are no inslands listed on this server for this channel"
+        response = "There are no islands listed on this server for this channel"
         return response
     for island in this_list:
         response = response + "{}\n".format(island.get_island())
