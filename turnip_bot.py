@@ -94,7 +94,7 @@ async def remove_expired_island(data):
     await client.wait_until_ready()
     while not client.is_closed():
         for server in data.keys():
-            for channel in data[server].key():
+            for channel in data[server].keys():
                 for item in data[server][channel]:
                     for island in item:
                         if island.expire_time < datetime.datetime.now():
