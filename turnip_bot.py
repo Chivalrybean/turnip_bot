@@ -63,7 +63,7 @@ def generate_list(server, channel):
     return response
 
 
-def add_island(server, channel, island):
+def add_island(server, channel, island): #TODO test this - it's overwriting itself, not adding new one
     """Adds an island to the data under the server and channel name"""
     global turnip_data
     if channel in turnip_data.keys():
