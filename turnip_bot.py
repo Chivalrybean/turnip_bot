@@ -8,7 +8,8 @@ import local_settings as ls
 turnip_data = {}
 # structure {server:{channel:[{islands}], channel:[{islands}]}, server:{channel: {[{islands}]}}}
 island_questions = ["What is your invite code?", "What is your turnip price?",
-"Is your price forcast rising or falling?", "Do you have a short note for visitors?"]
+                    "Is your price forcast rising or falling?", "Do you have a short note for visitors?"]
+
 
 class Island:
     def __init__(self, username, island_name, code, turnip_price, forecast, note):
@@ -63,11 +64,12 @@ def generate_list(server, channel):
     return response
 
 
-def add_island(server, channel, island): #TODO test this - it's overwriting itself, not adding new one
+def add_island(server, channel, island):
     """Adds an island to the data under the server and channel name"""
     global turnip_data
-    if channel in turnip_data.keys():
-        if server in turnip_data[server].keys():
+    if server in turnip_data.keys():
+        print()
+        if channel in turnip_data[server].keys():
             turnip_data[server][channel].append(island)
             save_data()
         else:
@@ -107,7 +109,7 @@ async def on_message(message):
         channel = message.channel
         user = message.author
         tmp_msg = await channel.send("What is your Island name?")
-        temp_msgs.append(tmp_msg) 
+        temp_msgs.append(tmp_msg)
 
         def check(msg):
             print(msg.channel == channel and msg.author == user)
@@ -115,7 +117,7 @@ async def on_message(message):
                 temp_msgs.append(msg)
             return msg.channel == channel and msg.author == user
 
-        island_info = [user.name] 
+        island_info = [user.name]
         for question in island_questions:
             try:
                 msg = await client.wait_for('message', timeout=60.0, check=check)
@@ -133,10 +135,10 @@ async def on_message(message):
         try:
             msg = await client.wait_for('message', timeout=60.0, check=check)
         except asyncio.TimeoutError:
-                timeout_msg = await channel.send("Island listing timed out")
-                temp_msgs.append(timeout_msg)
-                await delete_temp_messages()
-                return
+            timeout_msg = await channel.send("Island listing timed out")
+            temp_msgs.append(timeout_msg)
+            await delete_temp_messages()
+            return
         else:
             island_info.append(msg.content)
             print(island_info)
@@ -146,8 +148,6 @@ async def on_message(message):
             add_island(message.guild.id, channel.id, new_island)
             await channel.send(generate_list(message.guild.id, channel.id))
 
-        
-        
         # try:
         #     msg = await client.wait_for('message', timeout=60.0, check=check)
         # except asyncio.TimeoutError:
