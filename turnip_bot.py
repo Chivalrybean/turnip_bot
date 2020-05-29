@@ -20,7 +20,7 @@ class Island:
         self.turnip_price = turnip_price
         self.forecast = forecast
         self.note = note
-        self.expire_time = datetime.datetime.now() + datetime.timedelta(hours=expire_time)
+        self.expire_time = datetime.datetime.now() + datetime.timedelta(hours=int(expire_time))
 
     def get_island(self):
         response = "{} {} {} {} {} {}".format(
