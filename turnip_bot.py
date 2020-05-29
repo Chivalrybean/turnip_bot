@@ -29,32 +29,31 @@ class Island:
         return self.get_island()
 
 
-def save_data():
-    global turnip_data
+def save_data(data):
     """Saves turnip_data to pickle file"""
     with open('turnip_file', 'wb') as f:
-        pickle.dump(turnip_data, f)
+        pickle.dump(data, f)
 
 
-def load_data():
-    global turnip_data
+def load_data(data):
     """Loads pickle file data to turnip_data, unless no file present, then it creates a new file and puts current data into it."""
     try:
         with open('turnip_file', 'rb') as f:
-            turnip_data = pickle.load(f)
+            print('Loading data')
+            data = pickle.load(f)
+            # print(pickle.load(f))
     except FileNotFoundError:
         with open('turnip_file', 'wb') as f:
-            pickle.dump(turnip_data, f)
+            pickle.dump(data, f)
         print("New data file created")
 
 
-def generate_list(server, channel):
-    global turnip_data
+def generate_list(server, channel, data):
     """Creates a response to return to a Discord server and channel of the listed island to visit, if any.
     Will also generate list to edit when updated when island invites expire."""
     response = "-" * 40 + "\n"
     try:
-        this_list = turnip_data[server][channel]
+        this_list = data[server][channel]
     except KeyError:
         response = "There are no islands listed on this server for this channel"
         return response
@@ -64,23 +63,22 @@ def generate_list(server, channel):
     return response
 
 
-def add_island(server, channel, island):
+def add_island(server, channel, island, data):
     """Adds an island to the data under the server and channel name"""
-    global turnip_data
-    if server in turnip_data.keys():
+    if server in data.keys():
         print()
-        if channel in turnip_data[server].keys():
-            turnip_data[server][channel].append(island)
-            save_data()
+        if channel in data[server].keys():
+            data[server][channel].append(island)
+            save_data(data)
         else:
-            turnip_data[server][channel] = [island]
-            save_data()
+            data[server][channel] = [island]
+            save_data(data)
     else:
-        turnip_data[server] = {channel: [island]}
-        save_data()
+        data[server] = {channel: [island]}
+        save_data(data)
 
 
-# load_data()
+# load_data(turnip_data)
 
 # test_island = Island('Blubber', '2342S', 75, 'Falling', 'WHERESDABEEF')
 
@@ -145,8 +143,8 @@ async def on_message(message):
             new_island = Island(*island_info)
             temp_msgs.append(message)
             await delete_temp_messages()
-            add_island(message.guild.id, channel.id, new_island)
-            await channel.send(generate_list(message.guild.id, channel.id))
+            add_island(message.guild.id, channel.id, new_island, turnip_data)
+            await channel.send(generate_list(message.guild.id, channel.id, turnip_data))
 
         # try:
         #     msg = await client.wait_for('message', timeout=60.0, check=check)
