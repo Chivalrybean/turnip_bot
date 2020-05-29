@@ -11,7 +11,7 @@ island_questions = ["What is your invite code?", "What is your turnip price?",
 "Is your price forcast rising or falling?", "Do you have a short note for visitors?"]
 
 class Island:
-    def __init__(self, username, island_name, code, turnip_price='n/a', forecast='unknown', note=''):
+    def __init__(self, username, island_name, code, turnip_price, forecast, note):
         self.username = username
         self.island_name = island_name
         self.code = code
@@ -20,8 +20,8 @@ class Island:
         self.note = note
 
     def get_island(self):
-        response = "{} {} {} {} {}".format(
-            self.name, self.code, self.turnip_price, self.forecast, self.note)
+        response = "{} {} {} {} {} {}".format(
+            self.username, self.island_name, self.code, self.turnip_price, self.forecast, self.note)
         return response
 
     def __repr__(self):
@@ -113,7 +113,8 @@ async def on_message(message):
             if msg.channel == channel and msg.author == user:
                 temp_msgs.append(msg)
             return msg.channel == channel and msg.author == user
-        island_info = [user]        
+
+        island_info = [user.name] 
         for question in island_questions:
             try:
                 msg = await client.wait_for('message', timeout=60.0, check=check)
@@ -127,12 +128,22 @@ async def on_message(message):
                 print(island_info)
                 tmp_msg = await channel.send(question)
                 temp_msgs.append(tmp_msg)
-                if len(island_info) == 6:
-                    new_island = Island(*island_info)
-                    add_island(message.server, channel, new_island)
-                    await channel.send(generate_list())
-                    await delete_temp_messages()
-        
+
+        try:
+            msg = await client.wait_for('message', timeout=60.0, check=check)
+        except asyncio.TimeoutError:
+                timeout_msg = await channel.send("Island listing timed out")
+                temp_msgs.append(timeout_msg)
+                await delete_temp_messages()
+                return
+        else:
+            island_info.append(msg.content)
+            print(island_info)
+            new_island = Island(*island_info)
+            temp_msgs.append(message)
+            await delete_temp_messages()
+            add_island(message.guild, channel, new_island)
+            await channel.send(generate_list())
 
         
         
