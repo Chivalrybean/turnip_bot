@@ -1,5 +1,5 @@
 import discord
-import pickle
+# import pickle
 import re
 import asyncio
 
@@ -69,13 +69,13 @@ def add_island(server, channel, island, data):
         print()
         if channel in data[server].keys():
             data[server][channel].append(island)
-            save_data(data)
+            # save_data(data)
         else:
             data[server][channel] = [island]
-            save_data(data)
+            # save_data(data)
     else:
         data[server] = {channel: [island]}
-        save_data(data)
+        # save_data(data)
 
 
 # load_data(turnip_data)
