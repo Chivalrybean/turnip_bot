@@ -60,6 +60,7 @@ def generate_list(server, channel):
     for island in this_list:
         response = response + "{}\n".format(island.get_island())
     response = response + "-----www.patreon.com/spaceturtletools---"
+    return response
 
 
 def add_island(server, channel, island):
@@ -142,8 +143,8 @@ async def on_message(message):
             new_island = Island(*island_info)
             temp_msgs.append(message)
             await delete_temp_messages()
-            add_island(message.guild, channel, new_island)
-            await channel.send(generate_list())
+            add_island(message.guild.id, channel.id, new_island)
+            await channel.send(generate_list(message.guild.id, channel.id))
 
         
         
