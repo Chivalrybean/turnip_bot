@@ -97,7 +97,7 @@ async def remove_expired_island(data):
             for channel in data[server].keys():
                 for item in data[server][channel]:
                     if item.expire_time < datetime.datetime.now():
-                        channel.remove(item)
+                        data[server][channel].remove(item)
         print(data)
         await asyncio.sleep(600)
 
