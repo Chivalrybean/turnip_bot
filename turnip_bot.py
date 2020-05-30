@@ -150,6 +150,7 @@ async def on_message(message):
                 msg = await client.wait_for('message', timeout=60.0, check=check)
             except asyncio.TimeoutError:
                 timeout_msg = await channel.send("Island listing timed out")
+                temp_msgs.append(message)
                 temp_msgs.append(timeout_msg)
                 await delete_temp_messages()
                 return
