@@ -11,6 +11,7 @@ turnip_data = {}
 island_questions = ["What is your invite code?", "What is your turnip price?",
                     "Is your price forcast rising or falling?", "Do you have a short note for visitors?", "In how many hours do you want this invite to expire?\n(Use digits)"]
 
+message_log = {}
 
 class Island:
     def __init__(self, username, island_name, code, turnip_price, forecast, note, expire_time):
@@ -101,6 +102,15 @@ async def remove_expired_island(data):
         print(data)
         await asyncio.sleep(600)
 
+async def update_messages(server, channel, messages_log, data):
+    print('At least it got here?')
+    try:
+        print('Try?')
+        await message_log[server.id][channel.id].edit(content=generate_list(server.id, channel.id, data))
+    except KeyError:
+        # message_log[server][channel] = await client.server.channel.send(generate_list(server, channel, data))
+        print('KeyError')
+        message_log[server.id] = {channel.id: await channel.send(generate_list(server.id, channel.id, data))}
 
 @client.event
 async def on_ready():
@@ -158,18 +168,9 @@ async def on_message(message):
             temp_msgs.append(message)
             await delete_temp_messages()
             add_island(message.guild.id, channel.id, new_island, turnip_data)
-            await channel.send(generate_list(message.guild.id, channel.id, turnip_data))
+            # await channel.send(await update_messages(message.guild.id, channel.id, message_log, turnip_data))
+            await update_messages(message.guild, channel, message_log, turnip_data)
 
-        # try:
-        #     msg = await client.wait_for('message', timeout=60.0, check=check)
-        # except asyncio.TimeoutError:
-        #     timeout_msg = await channel.send("Island listing timed out")
-        #     temp_msg.append(timeout_msg)
-        #     await delete_temp_messages()
-        # else:
-        #     island_code = msg.content
-        #     print(island_code)
-        #     turnip_msg = await channel.send("What is your turnip price?")
 
 client.loop.create_task(remove_expired_island(turnip_data))
 client.run(ls.token)
