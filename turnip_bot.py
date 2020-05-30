@@ -55,7 +55,7 @@ def generate_list(server, channel, data):
     """Creates a response to return to a Discord server and channel of the listed island to visit, if any.
     Will also generate list to edit when updated when island invites expire."""
     response = "-" * 60 + "\n"
-    response = response + "Username - Island - Invite code - Turnip price - Forecast - Note"
+    response = response + "Username - Island - Invite code - Turnip price - Forecast - Note\n"
     try:
         this_list = data[server][channel]
     except KeyError:
