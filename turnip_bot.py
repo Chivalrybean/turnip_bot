@@ -24,7 +24,7 @@ class Island:
         self.expire_time = datetime.datetime.now() + datetime.timedelta(hours=int(expire_time))
 
     def get_island(self):
-        response = "{} {} {} {} {} {}".format(
+        response = "{} - {} - {} - {} - {} - {}".format(
             self.username, self.island_name, self.code, self.turnip_price, self.forecast, self.note)
         return response
 
@@ -54,10 +54,14 @@ def load_data(data):
 def generate_list(server, channel, data):
     """Creates a response to return to a Discord server and channel of the listed island to visit, if any.
     Will also generate list to edit when updated when island invites expire."""
-    response = "-" * 60 + "\n"
+    response = "-" * 61 + "\n"
     response = response + "Username - Island - Invite code - Turnip price - Forecast - Note\n"
     try:
         this_list = data[server][channel]
+        if len(this_list) == 0:
+            response = response + "There are no islands listed on this server for this channel"
+            response = response + "{}www.patreon.com/spaceturtletools{}".format("-" * 10,"-" * 10)
+            return response
     except KeyError:
         response = "There are no islands listed on this server for this channel"
         return response
