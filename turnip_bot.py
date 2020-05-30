@@ -59,11 +59,11 @@ def generate_list(server, channel, data):
     try:
         this_list = data[server][channel]
         if len(this_list) == 0:
-            response = response + "There are no islands listed on this server for this channel"
+            response = response + "There are no islands listed on this server for this channel\n"
             response = response + "{}www.patreon.com/spaceturtletools{}".format("-" * 10,"-" * 10)
             return response
     except KeyError:
-        response = "There are no islands listed on this server for this channel"
+        response = "There are no islands listed on this server for this channel\n"
         return response
     for island in this_list:
         response = response + "{}\n".format(island.get_island())
