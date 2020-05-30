@@ -54,7 +54,8 @@ def load_data(data):
 def generate_list(server, channel, data):
     """Creates a response to return to a Discord server and channel of the listed island to visit, if any.
     Will also generate list to edit when updated when island invites expire."""
-    response = "-" * 40 + "\n"
+    response = "-" * 60 + "\n"
+    response = response + "Username - Island - Invite code - Turnip price - Forecast - Note"
     try:
         this_list = data[server][channel]
     except KeyError:
@@ -62,7 +63,7 @@ def generate_list(server, channel, data):
         return response
     for island in this_list:
         response = response + "{}\n".format(island.get_island())
-    response = response + "-----www.patreon.com/spaceturtletools---"
+        response = response + "{}www.patreon.com/spaceturtletools{}".format("-" * 10,"-" * 10)
     return response
 
 
@@ -91,7 +92,7 @@ def add_island(server, channel, island, data):
 client = discord.Client()
 
 
-async def remove_expired_island(data):
+async def remove_expired_island(message_log, data):
     await client.wait_until_ready()
     while not client.is_closed():
         for server in data.keys():
@@ -99,18 +100,17 @@ async def remove_expired_island(data):
                 for item in data[server][channel]:
                     if item.expire_time < datetime.datetime.now():
                         data[server][channel].remove(item)
+                        await update_messages(server, channel, message_log, data)
         print(data)
         await asyncio.sleep(600)
 
-async def update_messages(server, channel, messages_log, data):
-    print('At least it got here?')
+async def update_messages(server_id, channel_id, messages_log, data, server=None, channel=None):
     try:
-        print('Try?')
-        await message_log[server.id][channel.id].edit(content=generate_list(server.id, channel.id, data))
+        await message_log[server_id][channel_id].edit(content=generate_list(server_id, channel_id, data))
     except KeyError:
         # message_log[server][channel] = await client.server.channel.send(generate_list(server, channel, data))
         print('KeyError')
-        message_log[server.id] = {channel.id: await channel.send(generate_list(server.id, channel.id, data))}
+        message_log[server_id] = {channel_id: await channel.send(generate_list(server_id, channel_id, data))}
 
 @client.event
 async def on_ready():
@@ -123,7 +123,7 @@ async def on_message(message):
 
     async def delete_temp_messages():
         for message in temp_msgs:
-            await message.delete(delay=60)
+            await message.delete(delay=10)
 
     if message.author == client.user:
         return
@@ -169,8 +169,8 @@ async def on_message(message):
             await delete_temp_messages()
             add_island(message.guild.id, channel.id, new_island, turnip_data)
             # await channel.send(await update_messages(message.guild.id, channel.id, message_log, turnip_data))
-            await update_messages(message.guild, channel, message_log, turnip_data)
+            await update_messages(message.guild.id, channel.id, message_log, turnip_data, message.guild, channel)
 
 
-client.loop.create_task(remove_expired_island(turnip_data))
+client.loop.create_task(remove_expired_island(message_log, turnip_data))
 client.run(ls.token)
