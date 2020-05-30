@@ -119,6 +119,7 @@ async def update_messages(server_id, channel_id, messages_log, data, server=None
 @client.event
 async def on_ready():
     print('The bot has logged in as {0.user}'.format(client))
+    await client.change_presence(status=discord.Status.idle, activity=discord.Game("&island to create invite"))
 
 
 @client.event
