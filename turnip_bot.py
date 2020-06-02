@@ -13,6 +13,7 @@ island_questions = ["What is your invite code?", "What is your turnip price?",
 
 message_log = {}
 
+
 class Island:
     def __init__(self, username, island_name, code, turnip_price, forecast, note, expire_time):
         self.username = username
@@ -21,7 +22,8 @@ class Island:
         self.turnip_price = turnip_price
         self.forecast = forecast
         self.note = note
-        self.expire_time = datetime.datetime.now() + datetime.timedelta(hours=int(expire_time))
+        self.expire_time = datetime.datetime.now(
+        ) + datetime.timedelta(hours=int(expire_time))
 
     def get_island(self):
         response = "{} - {} - {} - {} - {} - {}".format(
@@ -60,14 +62,17 @@ def generate_list(server, channel, data):
         this_list = data[server][channel]
         if len(this_list) == 0:
             response = response + "There are no islands listed on this server for this channel\n"
-            response = response + "{}www.patreon.com/spaceturtletools{}".format("-" * 10,"-" * 10)
+            response = response + \
+                "{}www.patreon.com/spaceturtletools{}".format(
+                    "-" * 10, "-" * 10)
             return response
     except KeyError:
         response = "There are no islands listed on this server for this channel\n"
         return response
     for island in this_list:
         response = response + "{}\n".format(island.get_island())
-        response = response + "{}www.patreon.com/spaceturtletools{}".format("-" * 10,"-" * 10)
+    response = response + \
+        "{}www.patreon.com/spaceturtletools{}".format("-" * 10, "-" * 10)
     return response
 
 
@@ -108,6 +113,7 @@ async def remove_expired_island(message_log, data):
         print(data)
         await asyncio.sleep(600)
 
+
 async def update_messages(server_id, channel_id, messages_log, data, server=None, channel=None):
     try:
         await message_log[server_id][channel_id].edit(content=generate_list(server_id, channel_id, data))
@@ -115,6 +121,7 @@ async def update_messages(server_id, channel_id, messages_log, data, server=None
         # message_log[server][channel] = await client.server.channel.send(generate_list(server, channel, data))
         print('KeyError')
         message_log[server_id] = {channel_id: await channel.send(generate_list(server_id, channel_id, data))}
+
 
 @client.event
 async def on_ready():
