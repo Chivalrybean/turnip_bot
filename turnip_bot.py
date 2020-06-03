@@ -122,9 +122,11 @@ async def update_messages(server_id, channel_id, messages_log, data, server=None
         # message_log[server][channel] = await client.server.channel.send(generate_list(server, channel, data))
         print('Message does not exist, making new one')
         message_log[server_id] = {channel_id: await channel.send(generate_list(server_id, channel_id, data))}
+        await message_log[server_id][channel_id].pin()
     except (discord.HTTPException, discord.NotFound):
         print('Message deleted, making new')
         message_log[server_id] = {channel_id: await channel.send(generate_list(server_id, channel_id, data))}
+        await message_log[server_id][channel_id].pin()
 
 
 @client.event
