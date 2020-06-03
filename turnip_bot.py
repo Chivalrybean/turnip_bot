@@ -23,7 +23,7 @@ class Island:
         self.forecast = forecast
         self.note = note
         self.expire_time = datetime.datetime.now(
-        ) + datetime.timedelta(hours=int(expire_time))
+        ) + datetime.timedelta(hours=float(expire_time))
         self.expire_time = datetime.datetime.now() + datetime.timedelta(hours=float(expire_time))
 
     def get_island(self):
@@ -118,9 +118,12 @@ async def remove_expired_island(message_log, data):
 async def update_messages(server_id, channel_id, messages_log, data, server=None, channel=None):
     try:
         await message_log[server_id][channel_id].edit(content=generate_list(server_id, channel_id, data))
-    except KeyError or (discord.HTTPException, discord.NotFound):
+    except KeyError:
         # message_log[server][channel] = await client.server.channel.send(generate_list(server, channel, data))
-        print('KeyError')
+        print('Message does not exist, making new one')
+        message_log[server_id] = {channel_id: await channel.send(generate_list(server_id, channel_id, data))}
+    except (discord.HTTPException, discord.NotFound):
+        print('Message deleted, making new')
         message_log[server_id] = {channel_id: await channel.send(generate_list(server_id, channel_id, data))}
 
 
@@ -181,7 +184,11 @@ async def on_message(message):
             new_island = Island(*island_info)
             temp_msgs.append(message)
             await delete_temp_messages()
-            add_island(message.guild.id, channel.id, new_island, turnip_data)
+            try:
+                add_island(message.guild.id, channel.id, new_island, turnip_data)
+            except ValueError:
+                timeout_msg = await channel.send("Please enter digits for your timeout.")
+                await delete_temp_messages()
             # await channel.send(await update_messages(message.guild.id, channel.id, message_log, turnip_data))
             await update_messages(message.guild.id, channel.id, message_log, turnip_data, message.guild, channel)
 
