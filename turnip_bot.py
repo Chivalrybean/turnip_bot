@@ -181,14 +181,16 @@ async def on_message(message):
         else:
             island_info.append(msg.content)
             print(island_info)
-            new_island = Island(*island_info)
-            temp_msgs.append(message)
-            await delete_temp_messages()
             try:
-                add_island(message.guild.id, channel.id, new_island, turnip_data)
+                number_check = float(island_info[6])
             except ValueError:
                 timeout_msg = await channel.send("Please enter digits for your timeout.")
                 await delete_temp_messages()
+                return
+            new_island = Island(*island_info)
+            temp_msgs.append(message)
+            await delete_temp_messages()
+            add_island(message.guild.id, channel.id, new_island, turnip_data)
             # await channel.send(await update_messages(message.guild.id, channel.id, message_log, turnip_data))
             await update_messages(message.guild.id, channel.id, message_log, turnip_data, message.guild, channel)
 
