@@ -154,7 +154,7 @@ async def on_message(message):
     elif message.content.startswith("&island"):
         channel = message.channel
         user = message.author
-        tmp_msg = await channel.send("What is your Island name?")
+        tmp_msg = await channel.send("What is your Island name?\n(Input over 15 characters will be truncated to 15\nfor all inputs)")
         temp_msgs.append(tmp_msg)
 
         def check(msg):
@@ -195,6 +195,8 @@ async def on_message(message):
                 timeout_msg = await channel.send("Please enter digits for your timeout.")
                 await delete_temp_messages()
                 return
+            for info in island_info:
+                info = info[0:14]
             new_island = Island(*island_info)
             temp_msgs.append(message)
             await delete_temp_messages()
