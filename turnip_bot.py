@@ -154,7 +154,7 @@ async def on_message(message):
     elif message.content.startswith("&island"):
         channel = message.channel
         user = message.author
-        tmp_msg = await channel.send("What is your Island name?\n(Input over 15 characters will be truncated to 15\nfor all inputs)")
+        tmp_msg = await channel.send("What is your Island name?\n(Input over 15 characters will be\ntruncated to 15 for all inputs)")
         temp_msgs.append(tmp_msg)
 
         def check(msg):
