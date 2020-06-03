@@ -24,6 +24,7 @@ class Island:
         self.note = note
         self.expire_time = datetime.datetime.now(
         ) + datetime.timedelta(hours=int(expire_time))
+        self.expire_time = datetime.datetime.now() + datetime.timedelta(hours=float(expire_time))
 
     def get_island(self):
         response = "{} - {} - {} - {} - {} - {}".format(
@@ -117,7 +118,7 @@ async def remove_expired_island(message_log, data):
 async def update_messages(server_id, channel_id, messages_log, data, server=None, channel=None):
     try:
         await message_log[server_id][channel_id].edit(content=generate_list(server_id, channel_id, data))
-    except KeyError:
+    except KeyError or (discord.HTTPException, discord.NotFound):
         # message_log[server][channel] = await client.server.channel.send(generate_list(server, channel, data))
         print('KeyError')
         message_log[server_id] = {channel_id: await channel.send(generate_list(server_id, channel_id, data))}
