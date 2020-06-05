@@ -47,10 +47,12 @@ def load_data(data):
             print('Loading data')
             data = pickle.load(f)
             # print(pickle.load(f))
+            return data
     except FileNotFoundError:
         with open('turnip_file', 'wb') as f:
             pickle.dump(data, f)
         print("New data file created")
+        return data
 
 
 def generate_list(server, channel, data):
@@ -82,16 +84,16 @@ def add_island(server, channel, island, data):
         print()
         if channel in data[server].keys():
             data[server][channel].append(island)
-            # save_data(data)
+            save_data(data)
         else:
             data[server][channel] = [island]
-            # save_data(data)
+            save_data(data)
     else:
         data[server] = {channel: [island]}
-        # save_data(data)
+        save_data(data)
 
 
-# load_data(turnip_data)
+turnip_data = load_data(turnip_data)
 
 # test_island = Island('Blubber', '2342S', 75, 'Falling', 'WHERESDABEEF')
 
