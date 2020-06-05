@@ -23,7 +23,8 @@ class Island:
         self.forecast = forecast
         self.note = note
         self.expire_time = datetime.datetime.now(
-        ) + datetime.timedelta(hours=int(expire_time))
+        ) + datetime.timedelta(hours=float(expire_time))
+        self.expire_time = datetime.datetime.now() + datetime.timedelta(hours=float(expire_time))
 
     def get_island(self):
         response = "{} - {} - {} - {} - {} - {}".format(
@@ -121,8 +122,19 @@ async def update_messages(server_id, channel_id, messages_log, data, server=None
         await message_log[server_id][channel_id].edit(content=generate_list(server_id, channel_id, data))
     except KeyError:
         # message_log[server][channel] = await client.server.channel.send(generate_list(server, channel, data))
-        print('KeyError')
+        print('Message does not exist, making new one')
         message_log[server_id] = {channel_id: await channel.send(generate_list(server_id, channel_id, data))}
+        try:
+            await message_log[server_id][channel_id].pin()
+        except:
+            pass
+    except (discord.HTTPException, discord.NotFound):
+        print('Message deleted, making new')
+        message_log[server_id] = {channel_id: await channel.send(generate_list(server_id, channel_id, data))}
+        try:
+            await message_log[server_id][channel_id].pin()
+        except:
+            pass
 
 
 @client.event
@@ -144,7 +156,7 @@ async def on_message(message):
     elif message.content.startswith("&island"):
         channel = message.channel
         user = message.author
-        tmp_msg = await channel.send("What is your Island name?")
+        tmp_msg = await channel.send("What is your Island name?\n(Input over 15 characters will be\ntruncated to 15 for all inputs)")
         temp_msgs.append(tmp_msg)
 
         def check(msg):
@@ -179,6 +191,14 @@ async def on_message(message):
         else:
             island_info.append(msg.content)
             print(island_info)
+            try:
+                number_check = float(island_info[6])
+            except ValueError:
+                timeout_msg = await channel.send("Please enter digits for your timeout.")
+                await delete_temp_messages()
+                return
+            for info in island_info:
+                info = info[0:14]
             new_island = Island(*island_info)
             temp_msgs.append(message)
             await delete_temp_messages()
