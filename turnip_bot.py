@@ -117,15 +117,22 @@ async def remove_expired_island(message_log, data):
         await asyncio.sleep(600)
 
 
-async def update_messages(server_id, channel_id, messages_log, data, server=None, channel=None):
-    try:
+async def update_messages(server_id, channel_id, message_log, data, server=None, channel=None):
+    if channel == None:
+        try:
+            channel = message_log[server_id][channel_id].channel #TODO Fails here on reload of bot because I don't same message_log
+        except KeyError:
+            if len(message_log) == 0:
+                return
+        
+    try:        
         await message_log[server_id][channel_id].delete()
         message_log[server_id] = {channel_id: await channel.send(generate_list(server_id, channel_id, data))}
         try:
             await message_log[server_id][channel_id].pin()
         except:
             pass
-    except KeyError:
+    except (KeyError, AttributeError):
         # message_log[server][channel] = await client.server.channel.send(generate_list(server, channel, data))
         print('Message does not exist, making new one')
         message_log[server_id] = {channel_id: await channel.send(generate_list(server_id, channel_id, data))}
