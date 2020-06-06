@@ -145,6 +145,10 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    # print(message)
+    if message.type == discord.MessageType.pins_add and message.author == client.user:
+        await message.delete()
+
     temp_msgs = []
 
     async def delete_temp_messages():
