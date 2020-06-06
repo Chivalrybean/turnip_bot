@@ -169,7 +169,7 @@ async def on_message(message):
                 temp_msgs.append(msg)
             return msg.channel == channel and msg.author == user
 
-        island_info = [user.name]
+        island_info = [user.id]
         for question in island_questions:
             try:
                 msg = await client.wait_for('message', timeout=60.0, check=check)
