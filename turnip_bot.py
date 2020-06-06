@@ -119,7 +119,12 @@ async def remove_expired_island(message_log, data):
 
 async def update_messages(server_id, channel_id, messages_log, data, server=None, channel=None):
     try:
-        await message_log[server_id][channel_id].edit(content=generate_list(server_id, channel_id, data))
+        await message_log[server_id][channel_id].delete()
+        message_log[server_id] = {channel_id: await channel.send(generate_list(server_id, channel_id, data))}
+        try:
+            await message_log[server_id][channel_id].pin()
+        except:
+            pass
     except KeyError:
         # message_log[server][channel] = await client.server.channel.send(generate_list(server, channel, data))
         print('Message does not exist, making new one')
