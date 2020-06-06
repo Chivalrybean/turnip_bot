@@ -112,7 +112,7 @@ async def remove_expired_island(message_log, data):
                 for item in data[server][channel]:
                     if item.expire_time < datetime.datetime.now():
                         data[server][channel].remove(item)
-                        await update_messages(server, channel, message_log, data)
+                        await update_messages(server, channel, message_log, data) #TODO Make this work with changed update_messages()
         print(data)
         await asyncio.sleep(600)
 
