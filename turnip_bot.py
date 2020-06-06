@@ -112,7 +112,7 @@ async def remove_expired_island(message_log, data):
                 for item in data[server][channel]:
                     if item.expire_time < datetime.datetime.now():
                         data[server][channel].remove(item)
-                        await update_messages(server, channel, message_log, data) #TODO Make this work with changed update_messages()
+                        await update_messages(server, channel, message_log, data) 
         print(data)
         await asyncio.sleep(600)
 
@@ -120,7 +120,7 @@ async def remove_expired_island(message_log, data):
 async def update_messages(server_id, channel_id, message_log, data, server=None, channel=None):
     if channel == None:
         try:
-            channel = message_log[server_id][channel_id].channel #TODO Fails here on reload of bot because I don't same message_log
+            channel = message_log[server_id][channel_id].channel 
         except KeyError:
             if len(message_log) == 0:
                 return
