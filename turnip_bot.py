@@ -9,7 +9,7 @@ import local_settings as ls
 turnip_data = {}
 # structure {server:{channel:[{islands}], channel:[{islands}]}, server:{channel: {[{islands}]}}}
 island_questions = ["What is your invite code?", "What is your turnip price?",
-                    "Is your price forcast rising or falling?", "Do you have a short note for visitors?", "In how many hours do you want this invite to expire?\n(Use digits)"]
+                    "Is your price forcast rising or falling?", "Do you have a short note for visitors? (50 chars)", "In how many hours do you want this invite to expire?\n(Use digits)"]
 
 message_log = {}
 
