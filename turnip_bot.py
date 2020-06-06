@@ -174,7 +174,7 @@ async def on_message(message):
                 temp_msgs.append(msg)
             return msg.channel == channel and msg.author == user
 
-        island_info = [user.id]
+        island_info = [user]
         for question in island_questions:
             try:
                 msg = await client.wait_for('message', timeout=60.0, check=check)
@@ -207,6 +207,11 @@ async def on_message(message):
                 await delete_temp_messages()
                 return
             for info in island_info:
+                if info == island_info[0]: #skip truncating ID
+                    continue
+                if info == island_info[5]: #Allow note to be longer
+                    info = info[0:49]
+                    continue
                 info = info[0:14]
             new_island = Island(*island_info)
             temp_msgs.append(message)
