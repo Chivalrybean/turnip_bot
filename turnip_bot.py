@@ -27,7 +27,7 @@ class Island:
         self.expire_time = datetime.datetime.now() + datetime.timedelta(hours=float(expire_time))
 
     def get_island(self):
-        response = "{} - {} - {} - {} - {} - {}".format(
+        response = "Member: **{}**\nIsland: **{}** -- Open status: **{}**\n Turnips: **{}** -- Forcast: **{}**\nNote: **{}**".format(
             self.username, self.island_name, self.code, self.turnip_price, self.forecast, self.note)
         return response
 
@@ -60,7 +60,7 @@ def generate_list(server, channel, data):
     """Creates a response to return to a Discord server and channel of the listed island to visit, if any.
     Will also generate list to edit when updated when island invites expire."""
     response = "-" * 61 + "\n"
-    response = response + "Username - Island - Invite code - Turnip price - Forecast - Note\n"
+    response = response + "Island, open status, and turnip information\n"
     try:
         this_list = data[server][channel]
         if len(this_list) == 0:
