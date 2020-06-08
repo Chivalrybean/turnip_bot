@@ -28,7 +28,7 @@ class Island:
 
     def get_island(self):
         response = "Member: **{}**\nIsland: **{}** -- Open status: **{}**\n\
-            Turnips: **{}** -- Forcast: **{}**\nNote: **{}**".format(
+        Turnips: **{}** -- Forcast: **{}**\nNote: **{}**".format(
             self.username, self.island_name, self.code, self.turnip_price, self.forecast, self.note)
         return response
 
@@ -158,9 +158,19 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    # print(message)
+    if ls.test_server:
+        if message.guild.id != ls.test_server_id:
+            return
+
+    if not ls.test_server:
+        if message.guild.id == ls.test_server_id:
+            return
+
+
+
     if message.type == discord.MessageType.pins_add and message.author == client.user:
         await message.delete()
+        return
 
     temp_msgs = []
 
