@@ -27,7 +27,8 @@ class Island:
         self.expire_time = datetime.datetime.now() + datetime.timedelta(hours=float(expire_time))
 
     def get_island(self):
-        response = "Member: **{}**\nIsland: **{}** -- Open status: **{}**\n Turnips: **{}** -- Forcast: **{}**\nNote: **{}**".format(
+        response = "Member: **{}**\nIsland: **{}** -- Open status: **{}**\n\
+            Turnips: **{}** -- Forcast: **{}**\nNote: **{}**".format(
             self.username, self.island_name, self.code, self.turnip_price, self.forecast, self.note)
         return response
 
@@ -73,7 +74,7 @@ def generate_list(server, channel, data):
         response = "There are no islands listed on this server for this channel\n"
         return response
     for island in this_list:
-        response = response + "{}\n".format(island.get_island())
+        response = response + "{}\n\n".format(island.get_island())
     response = response + \
         "{}www.patreon.com/spaceturtletools{}".format("-" * 10, "-" * 10)
     return response
