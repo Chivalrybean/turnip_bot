@@ -61,7 +61,7 @@ def generate_list(server, channel, data):
     """Creates a response to return to a Discord server and channel of the listed island to visit, if any.
     Will also generate list to edit when updated when island invites expire."""
     response = "-" * 61 + "\n"
-    response = response + "Island, open status, and turnip information\n"
+    response = response + "Island, open status, and turnip information\n\n"
     try:
         this_list = data[server][channel]
         if len(this_list) == 0:
