@@ -24,7 +24,8 @@ class Island:
         self.note = note
         self.expire_time = datetime.datetime.now(
         ) + datetime.timedelta(hours=float(expire_time))
-        self.expire_time = datetime.datetime.now() + datetime.timedelta(hours=float(expire_time))
+        self.expire_time = datetime.datetime.now(
+        ) + datetime.timedelta(hours=float(expire_time))
 
     def get_island(self):
         response = "Member: **{}**\nIsland: **{}** -- Open status: **{}**\n\
@@ -60,15 +61,15 @@ def load_data(data):
 def generate_list(server, channel, data):
     """Creates a response to return to a Discord server and channel of the listed island to visit, if any.
     Will also generate list to edit when updated when island invites expire."""
-    response = "-" * 61 + "\n"
+    response = "-" * 5 + "\n"
     response = response + "Island, open status, and turnip information\n\n"
     try:
         this_list = data[server][channel]
         if len(this_list) == 0:
             response = response + "There are no islands listed on this server for this channel\n"
             response = response + \
-                "{}www.patreon.com/spaceturtletools{}".format(
-                    "-" * 10, "-" * 10)
+                "{}www.patreon.com/spaceturtletools".format(
+                    "-" * 5)
             return response
     except KeyError:
         response = "There are no islands listed on this server for this channel\n"
@@ -113,7 +114,7 @@ async def remove_expired_island(message_log, data):
                 for item in data[server][channel]:
                     if item.expire_time < datetime.datetime.now():
                         data[server][channel].remove(item)
-                        await update_messages(server, channel, message_log, data) 
+                        await update_messages(server, channel, message_log, data)
         print(data)
         await asyncio.sleep(600)
 
@@ -121,12 +122,12 @@ async def remove_expired_island(message_log, data):
 async def update_messages(server_id, channel_id, message_log, data, server=None, channel=None):
     if channel == None:
         try:
-            channel = message_log[server_id][channel_id].channel 
+            channel = message_log[server_id][channel_id].channel
         except KeyError:
             if len(message_log) == 0:
                 return
-        
-    try:        
+
+    try:
         await message_log[server_id][channel_id].delete()
         message_log[server_id] = {channel_id: await channel.send(generate_list(server_id, channel_id, data))}
         try:
@@ -165,7 +166,6 @@ async def on_message(message):
     if not ls.test_server:
         if message.guild.id == ls.test_server_id:
             return
-
 
 
     if message.type == discord.MessageType.pins_add and message.author == client.user:
@@ -225,9 +225,9 @@ async def on_message(message):
                 await delete_temp_messages()
                 return
             for info in island_info:
-                if info == island_info[0]: #skip truncating ID
+                if info == island_info[0]:  # skip truncating ID
                     continue
-                if info == island_info[5]: #Allow note to be longer
+                if info == island_info[5]:  # Allow note to be longer
                     info = info[0:49]
                     continue
                 info = info[0:14]
